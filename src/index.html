@@ -2,24 +2,21 @@
   <head>
     <meta charset="utf8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Sample</title>
+    <title>Web Camera</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
-    <style>
-      video,
-      canvas {
-        border: 1px solid #333;
-      }
-    </style>
+    <link rel="stylesheet" href="assets/styles/reset.css">
+    <link rel="stylesheet" href="assets/styles/index.css">
   </head>
   <body>
-    <h1>Web Camera</h1>
     <div>
-      <video class="webcamera-video" width="400" height="300" autoplay="1" playsinline></video>
+      <video class="webcamera-video" autoplay="1" playsinline></video>
       <canvas class="webcamera-canvas" width="400" height="300"></canvas>
     </div>
-    <div>
+    <div class="webcamera-controls">
       <button class="webcamera-shot">撮影</button>
-      <button class="webcamera-download">ダウンロード</button>
+      <button class="webcamera-save">保存</button>
+      <button class="webcamera-remove">削除</button>
+      <button class="webcamera-change-camera">切替</button>
     </div>
     <script src="assets/scripts/web-camera.js"></script>
   </body>

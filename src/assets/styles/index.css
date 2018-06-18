@@ -1,0 +1,48 @@
+
+video,
+canvas {
+  /* object-fit: fill; */
+  border: 1px solid #333;
+  background: black;
+}
+.webcamera-canvas {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 1;
+}
+.webcamera-canvas.is-show {
+  display: block;
+}
+.webcamera-controls {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  background: rgba(0,0,0,.2);
+  text-align: center;
+  padding: 30px;
+}
+button {
+  border: none;
+  width: 100px;
+  height: 40px;
+  border-radius: 6px;
+  font-size: 16px;
+  letter-spacing: .1em;
+  cursor: pointer;
+  background: #FFF;
+}
+button:hover {
+  background: #EEE;
+}
+button:active {
+  background: #CCC;
+}
+button:not(:first-child) {
+  margin-left: 15px;
+}

@@ -1,37 +1,98 @@
 class WebCamera {
-  constructor ({$video, $canvas, $shot, $download}) {
+  constructor ({
+    $video,
+    $canvas,
+    $shot,
+    $save,
+    $remove,
+    $changeCamera
+  }, options) {
     this.$video = $video
     this.$canvas = $canvas
     this.$shot = $shot
-    this.$download = $download
+    this.$save = $save
+    this.$remove = $remove
+    this.$changeCamera = $changeCamera
+    this.options = options
     this.init()
   }
   init () {
+    this.setState('idle')
     this.bindEvents()
     this.startCamera()
+    this.setScreenSize()
     this.context = this.$canvas.getContext('2d')
   }
   bindEvents () {
     if (this.$shot) {
       this.$shot.addEventListener('click', () => this.takePhoto())
     }
-    if (this.$download) {
-      this.$download.addEventListener('click', () => this.savePhoto())
+    if (this.$save) {
+      this.$save.addEventListener('click', () => this.savePhoto())
+    }
+    if (this.$remove) {
+      this.$remove.addEventListener('click', () => this.setState('idle'))
+    }
+    if (this.$changeCamera) {
+      this.$changeCamera.addEventListener('click', () => this.startCamera(!this.useCameraFront))
+    }
+    window.addEventListener('resize', () => this.setScreenSize())
+  }
+  changeCamera (isFront) {
+    if (isFront) {
+      this.startCamera('user')
+    } else {
+      this.startCamera({exact: 'environment'})
     }
   }
-  startCamera () {
+  startCamera (isFront = false) {
     let localStream
+    const windowSize = {
+      width: window.innerWidth,
+      height: window.innerHeight
+    }
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || window.navigator.mozGetUserMedia
     window.URL = window.URL || window.webkitURL
-    navigator.getUserMedia({video: true, audio: false}, stream => {
+    navigator.getUserMedia({
+      video: {
+        facingMode: this.getFacingMode(isFront)
+      },
+      audio: false
+    }, stream => {
       console.log(stream)
       this.$video.srcObject = stream
     }, err => {
       console.error(err)
+      // リアカメラが使えない場合はフロントカメラを使用する
+      this.startCamera(this.getFacingMode(true))
     })
+    this.useCameraFront = isFront
+  }
+  getFacingMode (isFront) {
+    return isFront ? 'user' : {exact: 'environment'}
   }
   takePhoto () {
     this.context.drawImage(this.$video, 0, 0, this.$canvas.width, this.$canvas.height)
+    this.setState('shot')
+  }
+  setState (state) {
+    switch (state) {
+      case 'idle':
+        this.$canvas.classList.remove('is-show')
+        this.$shot.style.display = 'inline-block'
+        this.$changeCamera.style.display = 'inline-block'
+        this.$save.style.display = 'none'
+        this.$remove.style.display = 'none'
+        break
+      case 'shot':
+        this.$canvas.classList.add('is-show')
+        this.$shot.style.display = 'none'
+        this.$changeCamera.style.display = 'none'
+        this.$save.style.display = 'none'
+        this.$save.style.display = 'inline-block'
+        this.$remove.style.display = 'inline-block'
+        break
+    }
   }
   savePhoto (fileName, imageType = 'image/jpeg') {
     if (!fileName) {
@@ -46,6 +107,8 @@ class WebCamera {
     a.href = dataUrl
     a.download = fileName
     a.click()
+
+    this.hidePhoto()
   }
   Base64toBlob (base64) {
     const tmp = base64.split(',')
@@ -62,11 +125,29 @@ class WebCamera {
     const blob = new Blob([buf], {type: mime})
     return blob
   }
+  setScreenSize () {
+    const {screenSize} = this.options
+    if (!screenSize || screenSize !== 'full') {
+      return
+    }
+    const windowSize = {
+      width: window.innerWidth,
+      height: window.innerHeight
+    }
+    this.$video.width = windowSize.width
+    this.$video.height = windowSize.height
+    this.$canvas.width = windowSize.width
+    this.$canvas.height = windowSize.height
+  }
 }
 
 new WebCamera({
   $video: document.querySelector('.webcamera-video'),
   $canvas: document.querySelector('.webcamera-canvas'),
   $shot: document.querySelector('.webcamera-shot'),
-  $download: document.querySelector('.webcamera-download')
+  $save: document.querySelector('.webcamera-save'),
+  $remove: document.querySelector('.webcamera-remove'),
+  $changeCamera: document.querySelector('.webcamera-change-camera')
+}, {
+  screenSize: 'full'
 })
