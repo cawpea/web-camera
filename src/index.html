@@ -5,14 +5,21 @@
     <title>Sample</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
     <style>
-      video {
+      video,
+      canvas {
         border: 1px solid #333;
       }
     </style>
   </head>
   <body>
     <h1>Web Camera</h1>
-    <video id="video" width="400" height="300" autoplay="1" playsinline></video>
+    <div>
+      <video class="webcamera-video" width="400" height="300" autoplay="1" playsinline></video>
+      <canvas class="webcamera-canvas" width="400" height="300"></canvas>
+    </div>
+    <div>
+      <button class="webcamera-shot">撮影</button>
+    </div>
     <script src="assets/scripts/web-camera.js"></script>
   </body>
 </html>
